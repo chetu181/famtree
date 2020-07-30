@@ -19,35 +19,9 @@ class family:
         self.mother = mother
         self.childrens = childrens
 
-# #load persons
-# chet = person("chaithanya", 1, 3, 4, 1993)
-# hars = person("harsha", 2, 3, 4, 1997)
-# vid = person("vidya", 3, 5, 6, 1970)
-# shank = person("shankarmurthy", 4, 7, 8, 1963)
 
-# persons = [chet, hars, vid, shank]
-
-
-# pts = []
-# for person in persons:
-#     print(person.str())
-#     pts.append((np.random.random()*10, -person.yob))
-#     plt.plot(pts[-1][0], pts[-1][1], 'b.') # TODO: need to ensure siblings come below each other
-# # create a graph of persons.
-
-# #TODO: get curved lines
-# # TODO: get these info from the graph by an algo
-# def connect_pts(pt1, pt2, rel):
-#     pt1 -= 1
-#     pt2 -= 1
-#     plt.plot([pts[pt1][0], pts[pt2][0]], [pts[pt1][1], pts[pt2][1]], 'r-')
-# connect_pts(1,2, 's')
-# connect_pts(3,1, 'c')
-# connect_pts(4,1, 'c')
-
-
-# plt.show()
-np.random.seed(10)
+np.random.seed(190)
+fig, ax = plt.subplots(figsize=(12,9))
 
 persons = {}
 families = []
@@ -119,17 +93,21 @@ for fam in families:
     xcor = np.random.random()*10
     num_child = len(fam.childrens)
     for child in fam.childrens:
-        plt.plot(xcor, -child.yob, 'go' if child.gender=='female' else 'bs')
+        ax.plot(xcor, -child.yob, 'go' if child.gender=='female' else 'bs')
+        ax.text(xcor, -child.yob,child.name)
         child.xcor = xcor
     for i in range(num_child-1):
-        plt.plot([xcor]*2 , [ -fam.childrens[i].yob, -fam.childrens[i+1].yob ] , 'r-')
+        ax.plot([xcor]*2 , [ -fam.childrens[i].yob, -fam.childrens[i+1].yob ] , 'r-')
+
+def connect_people(pt1, pt2, rel, style):
+    ax.plot([pt1.xcor, pt2.xcor], [-pt1.yob, -pt2.yob], style)
 
 for fam in families:
     num_child = len(fam.childrens)
     if(num_child > 0):
         #find first child and connect.
         if(fam.father is not None):
-            plt.plot([fam.father.xcor, fam.childrens[0].xcor], [-fam.father.yob, -fam.childrens[0].yob],'r-')
+            connect_people(fam.father, fam.childrens[0], 'c', 'r-')
         if(fam.mother is not None):
-            plt.plot([fam.mother.xcor, fam.childrens[0].xcor], [-fam.mother.yob, -fam.childrens[0].yob],'r-')
+            connect_people(fam.mother, fam.childrens[0], 'c', 'r--')
 plt.show()
