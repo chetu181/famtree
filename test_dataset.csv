@@ -1,0 +1,5 @@
+name,gender,yob,sibling_of,parent_of,spouse_of,child_of
+john,male,1983,,,,
+katie,female,1960,,john,,
+rick,male,1953,,john,,
+chris,male,1987,john,,,
