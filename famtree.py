@@ -1,10 +1,11 @@
-from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 from argparse import ArgumentParser
+import plottree
 
 parser = ArgumentParser()
 parser.add_argument("--famfile", default='test_dataset.csv',help='name of the file with the family relationship info')
+parser.add_argument("--visualise", default='default',help='visualise with respect to who?')
 args = parser.parse_args()
 
 class person:
@@ -14,7 +15,8 @@ class person:
         self.gender = gender
         self.firstfam = None
         self.secondfam = None
-        
+        self.xcor = None
+
     def str(self):
         return self.name+' '+str(self.gender)+' '+str(self.yob)+' '+str(self.firstfam)+' '+str(self.secondfam)
 
@@ -25,8 +27,7 @@ class family:
         self.childrens = childrens
 
 
-np.random.seed(190)
-fig, ax = plt.subplots(figsize=(12,9))
+np.random.seed(40)
 
 persons = {}
 families = []
@@ -93,26 +94,12 @@ for i in range(1,datalen):
         pass
         # this must be first person, or someone with no relation before(exception)
 
+
 # plot families.                                                        
-for fam in families:
-    xcor = np.random.random()*10
-    num_child = len(fam.childrens)
-    for child in fam.childrens:
-        ax.plot(xcor, -child.yob, 'go' if child.gender=='female' else 'bs')
-        ax.text(xcor, -child.yob,child.name)
-        child.xcor = xcor
-    for i in range(num_child-1):
-        ax.plot([xcor]*2 , [ -fam.childrens[i].yob, -fam.childrens[i+1].yob ] , 'r-')
-
-def connect_people(pt1, pt2, rel, style):
-    ax.plot([pt1.xcor, pt2.xcor], [-pt1.yob, -pt2.yob], style)
-
-for fam in families:
-    num_child = len(fam.childrens)
-    if(num_child > 0):
-        #find first child and connect.
-        if(fam.father is not None):
-            connect_people(fam.father, fam.childrens[0], 'c', 'r-')
-        if(fam.mother is not None):
-            connect_people(fam.mother, fam.childrens[0], 'c', 'r--')
-plt.show()
+if(args.visualise=='default'):
+    plottree.default(families)
+elif(args.visualise not in persons):
+    print("ERROR: the person "+args.visualise+" is not in the dataset.")
+else:
+    key_person = persons[args.visualise]
+    plottree.person_centered(key_person, families)
