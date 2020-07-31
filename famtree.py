@@ -1,6 +1,11 @@
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
+from argparse import ArgumentParser
+
+parser = ArgumentParser()
+parser.add_argument("--famfile", default='test_dataset.csv',help='name of the file with the family relationship info')
+args = parser.parse_args()
 
 class person:
     def __init__(self,name, gender, yob):
@@ -27,7 +32,7 @@ persons = {}
 families = []
 
 # load persons from file
-famtree_csv_filename = 'famtree.csv'
+famtree_csv_filename = args.famfile
 data = pd.read_csv(famtree_csv_filename)
 datalen =  len(data["name"])
 print("datalen", datalen)
