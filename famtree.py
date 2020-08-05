@@ -61,7 +61,7 @@ for i in range(1,datalen):
         per.firstfam.childrens.append(per) #TODO: dont just append, put them in right order
         per.secondfam = family(per if gender=='male' else None , per if gender=='female' else None,[])
         families.append(per.secondfam)
-
+        
     elif(data["parent_of"][i] is not None):
         child = persons[data["parent_of"][i]]
         per.secondfam = child.firstfam
@@ -94,6 +94,8 @@ for i in range(1,datalen):
         pass
         # this must be first person, or someone with no relation before(exception)
 
+for family in families:
+    family.childrens.sort(key=lambda x: x.yob)
 
 # plot families.                                                        
 if(args.visualise=='default'):

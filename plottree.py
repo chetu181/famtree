@@ -33,13 +33,17 @@ def default(families):
                 connect_people(fam.mother, fam.childrens[0], 'c', 'r--', ax)
     plt.show()
 
-def plot_descendents(family, minx, maxx, ax):
+def plot_descendents(family, famxcor, minx, maxx, ax): #famxcor is usually equal to minx or maxx
     '''plots everyone with random xcor in minmaxx range'''
-    famxcor = minx + np.random.random()*(maxx-minx)
-    for child in family.childrens:
+    # famxcor = minx + np.random.random()*(maxx-minx)
+    num_child = len(family.childrens)
+    if(num_child < 1):
+        return
+    space = (maxx-minx)/(num_child)
+    for i, child in enumerate(family.childrens):
         child.xcor = famxcor
         plot_person(child, ax)
-        plot_descendents(child.secondfam, minx, maxx, ax)
+        plot_descendents(child.secondfam, minx + i*space, minx + i*space, minx + (i+1)* space, ax) #TODO: change index to get a slight slant curve
 
 def person_centered(key_person, families):
     print("drawing tree with respect to "+key_person.name)
@@ -67,11 +71,16 @@ def person_centered(key_person, families):
             queue.append(foref.firstfam.father)
 
             #plot forefathers descendents
-            for child in foref.firstfam.childrens:
-                if child is not foref:
-                    child.xcor = foref.xcor
-                    plot_person(child, ax)
-                    plot_descendents(child.secondfam, val , val+diff, ax)
+            num_siblings = len(foref.firstfam.childrens) - 1
+            if(num_siblings > 0):
+                space = diff / num_siblings
+                i=0
+                for child in reversed(foref.firstfam.childrens):
+                    if child is not foref:
+                        child.xcor = foref.xcor
+                        plot_person(child, ax)
+                        plot_descendents(child.secondfam, val +i*space, val+i*space , val+(i+1)*space, ax)
+                        i +=1
             val += diff
     expand_one_side([key_person.firstfam.father], -10)
     expand_one_side([key_person.firstfam.mother], 10)
@@ -79,7 +88,7 @@ def person_centered(key_person, families):
     for child in key_person.firstfam.childrens:
         child.xcor = 0
         plot_person(child, ax)
-        plot_descendents(child.secondfam, -10, 10, ax)
+        plot_descendents(child.secondfam, 5, -10, 10, ax)
 
     #connect 
     for fam in families:
