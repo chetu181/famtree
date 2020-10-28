@@ -5,9 +5,29 @@ def plot_person(person, ax):
     ax.plot(person.xcor, -person.yob, 'go' if person.gender=='female' else 'bs')
     ax.text(person.xcor, -person.yob,person.name)
 
+
+def draw_bezier(pt1, pt2, ptcount, style):
+    nppts = np.array([pt1,pt2])
+    pivot = np.array([nppts[1][0], nppts[0][1]])
+
+    #initialize bezier points and its first and last points
+    bezpts = np.zeros(shape=[ptcount+2,2])
+    bezpts[0] = np.array(pt1)
+    bezpts[-1] = np.array(pt2)
+    for i in range(1,ptcount+1):
+        w = i/(ptcount+1)
+        d1 = pivot -nppts[0]
+        d2 = nppts[1] - pivot
+        k = (pivot + w*d2) - (nppts[0] + w*d1)
+        curpt = nppts[0]+w*d1+w*k
+        bezpts[i]= curpt
+    bezpts = np.transpose(bezpts)
+    plt.plot(bezpts[0], bezpts[1], style)
+
 def connect_people(pt1, pt2, rel, style, ax):
     if(pt1.xcor is not None and pt1.xcor is not None):
-        ax.plot([pt1.xcor, pt2.xcor], [-pt1.yob, -pt2.yob], style)
+        # ax.plot([pt1.xcor, pt2.xcor], [-pt1.yob, -pt2.yob], style)
+        draw_bezier([pt1.xcor, -pt1.yob], [pt2.xcor, -pt2.yob], 10, style)
 
 
 def default(families):
