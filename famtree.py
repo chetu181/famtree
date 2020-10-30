@@ -33,11 +33,11 @@ persons = {}
 families = []
 
 # load persons from file
-famtree_csv_filename = args.famfile
-data = pd.read_csv(famtree_csv_filename)
+data = pd.read_csv(args.famfile)
+data = data.replace({np.nan:None})
 datalen =  len(data["name"])
 print("datalen", datalen)
-data = data.replace({np.nan:None})
+
 
 #add the first person.
 i=0
@@ -55,6 +55,7 @@ for i in range(1,datalen):
     gender = data["gender"][i]
     per = person(name, gender, data["yob"][i])
     persons[name] = per
+
     if(data["sibling_of"][i] is not None):
         sib = persons[data["sibling_of"][i]]
         per.firstfam = sib.firstfam
@@ -81,8 +82,7 @@ for i in range(1,datalen):
             per.secondfam.mother = per
         per.firstfam = family(None, None, [per])
         families.append(per.firstfam)
-
-        
+ 
     elif(data["child_of"][i] is not None):
         parent = persons[data["child_of"][i]]
         per.firstfam = parent.secondfam
@@ -94,6 +94,7 @@ for i in range(1,datalen):
         pass
         # this must be first person, or someone with no relation before(exception)
 
+#sort children by year of birth
 for family in families:
     family.childrens.sort(key=lambda x: x.yob)
 

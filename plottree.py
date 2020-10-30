@@ -104,6 +104,7 @@ def person_centered(key_person, families):
             val += diff
     expand_one_side([key_person.firstfam.father], -10)
     expand_one_side([key_person.firstfam.mother], 10)
+    
     # plot siblings and descendents
     for child in key_person.firstfam.childrens:
         child.xcor = 0
